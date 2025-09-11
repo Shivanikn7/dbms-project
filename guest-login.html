@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guest Login - Luxury Haven Hotel</title>
+  <link rel="stylesheet" href="thor.css">
+</head>
+<body>
+  <div class="modal-content hotel-login-modal" style="background: rgba(255,255,255,0.95); border-radius: 24px; box-shadow: 0 8px 32px #bfa76a44; backdrop-filter: blur(8px); padding: 32px; max-width: 400px; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 9999; display: flex; flex-direction: column; align-items: center;">
+    <div style="text-align:right; margin-bottom:16px; width:100%;">
+      <button id="guestLoginLogoutBtn" style="background:#bfa76a; color:#fff; border:none; border-radius:8px; padding:8px 24px; font-weight:bold;">Logout</button>
+    </div>
+    <h2 style="color:#bfa76a; text-align:center; font-family: 'Georgia', serif;">Welcome to Luxury Haven</h2>
+    <p style="text-align:center; color:#2d2d2d;">Sign in to continue your luxury experience</p>
+    <form id="guestLoginForm" class="login-form">
+      <div class="form-group">
+        <label style="font-weight:bold; color:#bfa76a;"><i data-lucide="mail"></i> Email</label>
+        <input type="email" name="email" required placeholder="e.g. john@example.com" style="border-radius:8px; border:1px solid #bfa76a; padding:8px;">
+      </div>
+      <div class="form-group">
+        <label style="font-weight:bold; color:#bfa76a;"><i data-lucide="lock"></i> Password</label>
+        <input type="password" name="password" required placeholder="Enter your password" style="border-radius:8px; border:1px solid #bfa76a; padding:8px;">
+      </div>
+      <button type="submit" class="login-submit-btn" style="background:#bfa76a; color:#fff; border:none; border-radius:8px; padding:10px 32px; font-weight:bold; margin-top:12px;">Login</button>
+    </form>
+    <div style="text-align:center; margin-top:10px;">
+      <a href="guest-signup.html" style="color:#2d2d2d; font-weight:bold; text-decoration:underline;">Don't have an account? Sign up</a>
+    </div>
+  </div>
+  <script src="guest-login.js"></script>
+  <script>
+    document.getElementById('guestLoginLogoutBtn').onclick = function() {
+      window.location.href = 'flash.html';
+    };
+  </script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>if(window.lucide) lucide.createIcons();</script>
+  <script src="guest-login.js"></script>
+</body>
+</html>

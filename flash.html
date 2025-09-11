@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Luxury Haven Hotel - Management System</title>
+  <link rel="stylesheet" href="thor.css">
+  <!-- Load Lucide icon library first -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <!-- Login Modal -->
+  <div id="loginModal" class="modal">
+  <div class="modal-content hotel-login-modal" style="background: rgba(255,255,255,0.95); border-radius: 24px; box-shadow: 0 8px 32px #bfa76a44; backdrop-filter: blur(8px); padding: 32px; max-width: 400px; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 9999; display: flex; flex-direction: column; align-items: center;">
+      <div class="login-header">
+        <h2>Welcome to Luxury Haven</h2>
+        <p class="login-subtitle">Sign in to continue your luxury experience</p>
+      </div>
+      <div class="login-options">
+  <button onclick="showLoginForm('staff')" class="active" style="background:#2d2d2d; color:#fff; border:2px solid #bfa76a; border-radius:8px; padding:8px 24px; font-weight:bold;">Staff Login</button>
+      </div>
+      <form id="loginForm">
+        <div class="form-group">
+          <label><i data-lucide="mail"></i> Email</label>
+          <input type="email" id="loginEmail" required placeholder="e.g. john@example.com">
+        </div>
+        <div class="form-group">
+          <label><i data-lucide="lock"></i> Password</label>
+          <input type="password" id="loginPassword" required placeholder="Enter your password">
+        </div>
+        <button type="submit" class="login-submit-btn">Login</button>
+  <!-- No signup link for staff login -->
+      </form>
+    <button id="staffLoginLogoutBtn" style="margin-top: 12px; background:#bfa76a; color:#fff; border:none; border-radius:8px; padding:8px 24px; font-weight:bold;">Logout</button>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container">
+      <div class="nav-content">
+        <div class="logo">
+          <i data-lucide="hotel"></i>
+          <i data-lucide="crown" class="crown-icon"></i>
+          <a href="#home">Luxury Haven</a>
+        </div>
+
+        <div class="nav-links" id="navLinks">
+          <a href="#home">Home</a>
+          <a href="#rooms">Rooms</a>
+          <a href="#amenities">Amenities</a>
+          <a href="#contact">Contact</a>
+          <a href="guest-signup.html" class="nav-btn" style="background:#bfa76a; color:#fff; border-radius:8px; padding:6px 18px; font-weight:bold; margin-right:8px;">Guest Signup</a>
+          <a href="guest-login.html" class="nav-btn" style="background:#2d2d2d; color:#fff; border-radius:8px; padding:6px 18px; font-weight:bold;">Guest Login</a>
+          <div class="auth-buttons">
+            <button onclick="showLoginModal()" class="login-btn">Staff Login</button>
+          </div>
+
+        <button id="themeToggle" class="theme-toggle-btn" aria-label="Toggle dark mode">
+  <i data-lucide="moon"></i>
+</button>
+        </div>
+
+        <button id="menuButton" class="menu-button" aria-label="Toggle menu">
+          <i data-lucide="menu"></i>
+        </button>
+      </div>
+    </div>
+     <!-- Animated New Features Marquee -->
+  <div class="hotel-marquee">
+    <div class="marquee-content">
+      <span>
+        ✨ Rooftop Infinity Pool &nbsp; | &nbsp; 🍽️ Michelin-Star Dining &nbsp; | &nbsp; 🛏️ Smart Room Controls &nbsp; | &nbsp; 🏋️ 24/7 Fitness Studio &nbsp; | &nbsp; 🚗 Complimentary Airport Pickup &nbsp; | &nbsp; 🌸 Spa & Wellness Retreat
+      </span>
+    </div>
+  </div>
+  </nav>
+
+  <!-- Staff Dashboard (Hotel-Themed) -->
+  <div id="staffDashboard" class="dashboard hidden">
+    <div class="container">
+      <div style="text-align:right; margin-bottom:16px;">
+        <button id="staffLogoutBtn" style="background:#bfa76a; color:#fff; border:none; border-radius:8px; padding:8px 24px; font-weight:bold;">Logout</button>
+      </div>
+      <h2><i data-lucide="concierge-bell"></i> Staff Dashboard</h2>
+      <div class="dashboard-grid">
+        <div class="dashboard-card">
+          <h3><i data-lucide="calendar-plus"></i> New Bookings</h3>
+          <div id="newBookings" class="booking-list">
+            <!-- Example item -->
+            <!-- <div class="booking-item"><i data-lucide="user"></i> John Doe - Deluxe Room</div> -->
+          </div>
+        </div>
+        <div class="dashboard-card">
+          <h3><i data-lucide="log-in"></i> Check-ins Today</h3>
+          <div id="checkIns" class="booking-list"></div>
+        </div>
+        <div class="dashboard-card">
+          <h3><i data-lucide="log-out"></i> Check-outs Today</h3>
+          <div id="checkOuts" class="booking-list"></div>
+        </div>
+        <div class="dashboard-card">
+          <h3><i data-lucide="bed-double"></i> Room Status</h3>
+          <div id="roomStatus" class="room-status-grid">
+            <!-- <div class="room-status">101 - Occupied</div> -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Offline Booking Form -->
+      <div class="offline-booking-section">
+        <h3>New Offline Booking</h3>
+        <section id="booking" class="booking">
+          <div class="container">
+            <h2>Book Your Stay</h2>
+            <form id="staffbookingForm" class="booking-form">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label>Check-in Date</label>
+                  <input type="date" id="staffcheckInDate" name="staffcheckIn" required>
+                </div>
+                <div class="form-group">
+                  <label>Check-out Date</label>
+                  <input type="date" id="staffcheckOutDate"name="staffcheckOut" required>
+                </div>
+                <div class="form-group">
+                  <label>Room Type</label>
+                  <select name="roomType" id="roomType" required onchange="updateRate()">
+                    <option value="" disabled selected>Select Room</option>
+                    <option value="deluxe">Deluxe Ocean View</option>
+                    <option value="executive">Executive Suite</option>
+                    <option value="garden">Garden Villa</option>
+                    <option value="penthouse">Penthouse Suite</option>
+                  </select>
+                  <p id="roomRate" style="margin-top: 5px; color: green;"></p>
+                </div>
+                <div class="form-group">
+                  <label>Number of Guests</label>
+                  <select name="guests" id="guests" required onchange="updateTotal()">
+                    <option value="1">1 Guest</option>
+                    <option value="2">2 Guests</option>
+                    <option value="3">3 Guests</option>
+                    <option value="4">4 Guests</option>
+                  </select>
+                </div>
+              </div>
+        
+              <!-- Guest Details (Hotel-Themed, Enhanced) -->
+              <div class="guest-details" style="background: #f8f6f2; border-radius: 16px; box-shadow: 0 2px 12px #e0d7c6; padding: 32px; margin-bottom: 32px;">
+                <h3 style="color: #bfa76a; font-family: 'Georgia', serif; letter-spacing: 1px;">
+                  <i data-lucide="user" style="vertical-align: middle; margin-right: 8px;"></i>
+                  Guest Details
+                </h3>
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label><i data-lucide="user"></i> Full Name</label>
+                    <input type="text" name="name" required placeholder="e.g. John Doe">
+                  </div>
+                  <div class="form-group">
+                    <label><i data-lucide="mail"></i> Email</label>
+                    <input type="email" name="email" required placeholder="e.g. john@example.com">
+                  </div>
+                  <div class="form-group">
+                    <label><i data-lucide="phone"></i> Phone</label>
+                    <input type="tel" name="phone" required placeholder="e.g. +91 98765 43210">
+                  </div>
+                  <div class="form-group">
+                    <label><i data-lucide="id-card"></i> ID Type</label>
+                    <select name="idType" required>
+                      <option value="" disabled selected>Select ID Type</option>
+                      <option value="passport">Passport</option>
+                      <option value="driving_license">Driving License</option>
+                      <option value="national_id">National ID</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label><i data-lucide="hash"></i> ID Number</label>
+                    <input type="text" name="idNumber" required placeholder="Enter your ID number">
+                  </div>
+                  <div class="form-group">
+                    <label><i data-lucide="map-pin"></i> Address</label>
+                    <input type="text" name="address" required placeholder="e.g. 123 Luxury St, Paradise City">
+                  </div>
+                  <div class="form-group">
+                    <label><i data-lucide="repeat"></i> Total Visits</label>
+                    <input type="number" min="1" name="total_visit" required placeholder="e.g. 1">
+                  </div>
+                  <div class="form-group">
+                    <label><i data-lucide="calendar"></i> Last Visit Date</label>
+                    <input type="date" name="last_visit" id="staffLastVisitDate" required>
+                  </div>
+                </div>
+              </div>
+        
+              <div class="payment-details">
+                <h3>Payment Details</h3>
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label>Payment Method</label>
+                    <select name="paymentMethod" required>
+                      <option value="card">Credit/Debit Card</option>
+                      <option value="bank_transfer">Bank Transfer</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>Card Number</label>
+                    <input type="text" name="cardNumber" placeholder="1234 5678 9012 3456">
+                  </div>
+                  <div class="form-group">
+                    <input type="text" name="expiry" placeholder="MM/YY">
+                    <input type="text" name="cvv" placeholder="CVV">
+                  </div>
+                </div>
+        
+                <!-- Total Price Display -->
+                <div class="form-group">
+                  <label>Total Amount:</label>
+                  <input type="text" id="totalAmount" name="totalAmount" readonly style="font-weight: bold;">
+                </div>
+              </div>
+        
+              <!-- Submit -->
+              <button type="submit" class="submit-button">Confirm Booking</button>
+        <button type="button" onclick="payNow('staffbookingForm')" class="submit-button" style="margin-top: 10px; background-color: #27ae60;">Pay Now</button>
+              <button id="staffBookingLogoutBtn" type="button" style="margin-top: 10px; background-color: #bfa76a; color: #fff; border:none; border-radius:8px; padding:8px 24px; font-weight:bold; display:none;">Logout</button>
+            </form>
+          </div>
+        </section>
+  
+      </div>
+    </div>
+  </div>
+
+  <!-- User Dashboard (Hotel-Themed) -->
+  <div id="userDashboard" class="dashboard hidden">
+    <div class="container">
+      <div style="text-align:right; margin-bottom:16px;">
+        <button id="guestLogoutBtn" style="background:#bfa76a; color:#fff; border:none; border-radius:8px; padding:8px 24px; font-weight:bold;">Logout</button>
+      </div>
+      <h2><i data-lucide="user"></i> My Bookings</h2>
+      <div class="user-bookings">
+        <div id="activeBookings" class="booking-list">
+          <h3><i data-lucide="clock"></i> Active Bookings</h3>
+          <!-- Active bookings will be populated here -->
+        </div>
+        <div id="bookingHistory" class="booking-list">
+          <h3><i data-lucide="history"></i> Booking History</h3>
+          <!-- Booking history will be populated here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content (Guest View) -->
+  <main id="mainContent">
+    
+
+    <!-- Hero Section -->
+
+    <section id="home" class="hero">
+
+  <div class="hero-content">
+    <h1>Welcome to Luxury Haven</h1>
+    <p>Experience unparalleled luxury and comfort</p>
+    <a href="#rooms" class="cta-button">Explore Our Rooms</a>
+  </div>
+
+  
+  <!-- Search Guest Section INSIDE HERO -->
+  <div class="search-guest-section" style="margin: 32px auto 0 auto; background: #fffbe9cc; border-radius: 14px; box-shadow: 0 2px 12px #e0d7c6; padding: 24px; max-width: 420px;">
+    <h3 style="color: #bfa76a; font-family: 'Georgia', serif; margin-bottom: 12px; text-align:center;">
+      <i data-lucide="search"></i> Search Guest by Phone
+    </h3>
+    <div style="display: flex; gap: 12px; align-items: center; justify-content:center;">
+      <input type="tel" id="searchGuestPhone" placeholder="Enter guest phone number" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #e0d7c6; width: 180px;">
+      <button onclick="searchGuestByPhone()" style="background: #bfa76a; color: #fff; border: none; border-radius: 6px; padding: 8px 18px; font-weight: bold; cursor: pointer;">Search</button>
+    </div>
+    <div style="margin-top:10px;text-align:center;">
+      <span id="guestVisitResult" style="color: #2d2d2d; font-weight: 600;"></span>
+    </div>
+  </div>
+</section>
+  
+    <!-- Rooms Section -->
+    <section id="rooms" class="rooms">
+      <div class="container">
+        <div class="section-title">
+          <h2>Our Luxurious Rooms</h2>
+          <p>Indulge in the epitome of luxury with our carefully curated selection of rooms and suites</p>
+        </div>
+        <div class="rooms-grid">
+          <div class="room-card">
+            <div class="room-image">
+              <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800" alt="Deluxe Ocean View">
+              <div class="room-price">$299/night</div>
+            </div>
+            <div class="room-content">
+              <h3>Deluxe Ocean View</h3>
+              <p>Luxurious room with panoramic ocean views and private balcony, perfect for a romantic getaway.</p>
+              <div class="room-features">
+                <div class="feature">
+                  <i data-lucide="users"></i>
+                  <span>2 Guests</span>
+                </div>
+                <div class="feature">
+                  <i data-lucide="maximize"></i>
+                  <span>45 m²</span>
+                </div>
+                <div class="feature">
+                  <i data-lucide="bed"></i>
+                  <span>King Bed</span>
+                </div>
+              </div>
+              <a href="#booking" class="room-button">Book Now</a>
+            </div>
+          </div>
+  
+          <div class="room-card">
+            <div class="room-image">
+              <img src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=800" alt="Executive Suite">
+              <div class="room-price">$499/night</div>
+            </div>
+            <div class="room-content">
+              <h3>Executive Suite</h3>
+              <p>Spacious suite with separate living area, premium amenities, and stunning city views.</p>
+              <div class="room-features">
+                <div class="feature">
+                  <i data-lucide="users"></i>
+                  <span>2 Guests</span>
+                </div>
+                <div class="feature">
+                  <i data-lucide="maximize"></i>
+                  <span>65 m²</span>
+                </div>
+                <div class="feature">
+                  <i data-lucide="bed"></i>
+                  <span>King Bed</span>
+                </div>
+              </div>
+              <a href="#booking" class="room-button">Book Now</a>
+            </div>
+          </div>
+  
+          <div class="room-card">
+            <div class="room-image">
+              <img src="https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?auto=format&fit=crop&w=800" alt="Garden Villa">
+              <div class="room-price">$799/night</div>
+            </div>
+            <div class="room-content">
+              <h3>Garden Villa</h3>
+              <p>Private villa surrounded by tropical gardens with personal pool and exclusive amenities.</p>
+              <div class="room-features">
+                <div class="feature">
+                  <i data-lucide="users"></i>
+                  <span>4 Guests</span>
+                </div>
+                <div class="feature">
+                  <i data-lucide="maximize"></i>
+                  <span>120 m²</span>
+                </div>
+                <div class="feature">
+                  <i data-lucide="bed"></i>
+                  <span>2 King Beds</span>
+                </div>
+              </div>
+              <a href="#booking" class="room-button">Book Now</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Booking Section -->
+    <section id="booking" class="booking">
+      <div class="container">
+        <h2>Book Your Stay</h2>
+        <form id="userbookingForm" class="booking-form">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Check-in Date</label>
+<input type="date" name="usercheckIn" required id="usercheckInDate" min="2025-08-31">
+            </div>
+            <div class="form-group">
+              <label>Check-out Date</label>
+<input type="date" name="usercheckOut" required id="usercheckOutDate" min="2025-08-31">
+            </div>
+            <div class="form-group">
+
+              <label>Room Type</label>
+              <select name="roomType" id="roomType" required onchange="updateRate()">
+                <option value="" disabled selected>Select Room</option>
+                <option value="deluxe">Deluxe Ocean View</option>
+                <option value="executive">Executive Suite</option>
+                <option value="garden">Garden Villa</option>
+                <option value="penthouse">Penthouse Suite</option>
+              </select>
+              <p id="roomRate" style="margin-top: 5px; color: green;"></p>
+            </div>
+            <div class="form-group">
+              <label>Number of Guests</label>
+              <select name="guests" id="guests" required onchange="updateTotal()">
+                <option value="1">1 Guest</option>
+                <option value="2">2 Guests</option>
+                <option value="3">3 Guests</option>
+                <option value="4">4 Guests</option>
+              </select>
+            </div>
+          </div>
+    
+          <!-- Guest Details (Hotel-Themed, Enhanced) -->
+          <div class="guest-details" style="background: #f8f6f2; border-radius: 16px; box-shadow: 0 2px 12px #e0d7c6; padding: 32px; margin-bottom: 32px;">
+            <h3 style="color: #bfa76a; font-family: 'Georgia', serif; letter-spacing: 1px;">
+              <i data-lucide="user" style="vertical-align: middle; margin-right: 8px;"></i>
+              Guest Details
+            </h3>
+            <div class="form-grid">
+              <div class="form-group">
+                <label><i data-lucide="user"></i> Full Name</label>
+                <input type="text" name="name" required placeholder="e.g. John Doe">
+              </div>
+              <div class="form-group">
+                <label><i data-lucide="mail"></i> Email</label>
+                <input type="email" name="email" required placeholder="e.g. john@example.com">
+              </div>
+              <div class="form-group">
+                <label><i data-lucide="phone"></i> Phone</label>
+                <input type="tel" name="phone" required placeholder="e.g. +91 98765 43210">
+              </div>
+              <div class="form-group">
+                <label><i data-lucide="id-card"></i> ID Type</label>
+                <select name="idType" required>
+                  <option value="" disabled selected>Select ID Type</option>
+                  <option value="passport">Passport</option>
+                  <option value="driving_license">Driving License</option>
+                  <option value="national_id">National ID</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label><i data-lucide="hash"></i> ID Number</label>
+                <input type="text" name="idNumber" required placeholder="Enter your ID number">
+              </div>
+              <div class="form-group">
+                <label><i data-lucide="map-pin"></i> Address</label>
+                <input type="text" name="address" required placeholder="e.g. 123 Luxury St, Paradise City">
+              </div>
+              <div class="form-group">
+                <label><i data-lucide="repeat"></i> Total Visits</label>
+                <input type="number" min="1" name="total_visit" required placeholder="e.g. 1">
+              </div>
+              <div class="form-group">
+                <label><i data-lucide="calendar"></i> Last Visit Date</label>
+                <input type="date" name="last_visit" id="guestLastVisitDate" required>
+              </div>
+            </div>
+          </div>
+    
+          <div class="payment-details">
+            <h3>Payment Details</h3>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Payment Method</label>
+                <select name="paymentMethod" required>
+                  <option value="card">Credit/Debit Card</option>
+                  <option value="bank_transfer">Bank Transfer</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Card Number</label>
+                <input type="text" name="cardNumber" placeholder="1234 5678 9012 3456">
+              </div>
+              <div class="form-group">
+                <input type="text" name="expiry" placeholder="MM/YY">
+                <input type="text" name="cvv" placeholder="CVV">
+              </div>
+            </div>
+    
+            <!-- Total Price Display -->
+            <div class="form-group">
+              <label>Total Amount:</label>
+              <input type="text" id="totalAmount" name="totalAmount" readonly style="font-weight: bold;">
+            </div>
+          </div>
+    
+          <!-- Submit -->
+          <button type="submit" class="submit-button">Confirm Booking</button>
+            <button type="button" onclick="payNow('userbookingForm')" class="submit-button" style="margin-top: 10px; background-color: #27ae60;">Pay Now</button>
+          <button id="guestBookingLogoutBtn" type="button" style="margin-top: 10px; background-color: #bfa76a; color: #fff; border:none; border-radius:8px; padding:8px 24px; font-weight:bold; display:none;">Logout</button>
+        </form>
+      </div>
+    </section>
+
+    <
+    
+  
+    
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Show logout button after booking for staff
+  const staffForm = document.getElementById('staffbookingForm');
+  const staffLogoutAfterBooking = document.getElementById('staffBookingLogoutBtn');
+  if (staffForm && staffLogoutAfterBooking) {
+    staffForm.addEventListener('submit', function(e) {
+      setTimeout(function() {
+        staffLogoutAfterBooking.style.display = 'inline-block';
+      }, 500); // Show after booking confirmation
+    });
+    staffLogoutAfterBooking.onclick = function() {
+      document.getElementById('staffDashboard').classList.add('hidden');
+      document.getElementById('mainContent').classList.remove('hidden');
+      staffLogoutAfterBooking.style.display = 'none';
+    };
+  }
+    // Staff login modal logout button
+    const staffLoginLogoutBtn = document.getElementById('staffLoginLogoutBtn');
+    if (staffLoginLogoutBtn) {
+      staffLoginLogoutBtn.addEventListener('click', function() {
+        // Hide login modal and optionally clear login fields
+        document.getElementById('loginModal').style.display = 'none';
+        document.getElementById('loginEmail').value = '';
+        document.getElementById('loginPassword').value = '';
+      });
+    }
+  // Show logout button after booking for guest
+  const guestForm = document.getElementById('userbookingForm');
+  const guestLogoutAfterBooking = document.getElementById('guestBookingLogoutBtn');
+  if (guestForm && guestLogoutAfterBooking) {
+    guestForm.addEventListener('submit', function(e) {
+      setTimeout(function() {
+        guestLogoutAfterBooking.style.display = 'inline-block';
+      }, 500); // Show after booking confirmation
+    });
+    guestLogoutAfterBooking.onclick = function() {
+      document.getElementById('userDashboard').classList.add('hidden');
+      document.getElementById('mainContent').classList.remove('hidden');
+      guestLogoutAfterBooking.style.display = 'none';
+    };
+  }
+  // Logout logic
+  const staffLogoutBtn = document.getElementById('staffLogoutBtn');
+  if (staffLogoutBtn) {
+    staffLogoutBtn.addEventListener('click', function() {
+      document.getElementById('staffDashboard').classList.add('hidden');
+      document.getElementById('mainContent').classList.remove('hidden');
+      // Optionally clear staff session data here
+    });
+  }
+  const guestLogoutBtn = document.getElementById('guestLogoutBtn');
+  if (guestLogoutBtn) {
+    guestLogoutBtn.addEventListener('click', function() {
+      document.getElementById('userDashboard').classList.add('hidden');
+      document.getElementById('mainContent').classList.remove('hidden');
+    });
+  }
+  // Date validation for check-in and check-out fields: block past dates, clear field, show alert
+  var today = new Date();
+  var yyyy = today.getFullYear();
+  var mm = String(today.getMonth() + 1).padStart(2, '0');
+  var dd = String(today.getDate()).padStart(2, '0');
+  var todayStr = yyyy + '-' + mm + '-' + dd;
+
+  // Staff form date validation
+  var staffCheckin = document.getElementById('staffcheckInDate');
+  if (staffCheckin) {
+    staffCheckin.setAttribute('min', todayStr);
+    staffCheckin.addEventListener('input', function() {
+      var val = staffCheckin.value;
+      if (val && val < todayStr) {
+        staffCheckin.value = '';
+        alert('Past dates are not allowed. Please select today or a future date.');
+      }
+    });
+  }
+  var staffCheckout = document.getElementById('staffcheckOutDate');
+  if (staffCheckout) {
+    staffCheckout.setAttribute('min', todayStr);
+    staffCheckout.addEventListener('input', function() {
+      var val = staffCheckout.value;
+      if (val && val < todayStr) {
+        staffCheckout.value = '';
+        alert('Past dates are not allowed. Please select today or a future date.');
+      }
+    });
+  }
+
+  // Guest form date validation
+  var guestCheckin = document.getElementById('usercheckInDate');
+  if (guestCheckin) {
+    guestCheckin.setAttribute('min', todayStr);
+    guestCheckin.addEventListener('input', function() {
+      var val = guestCheckin.value;
+      if (val && val < todayStr) {
+        guestCheckin.value = '';
+        alert('Past dates are not allowed. Please select today or a future date.');
+      }
+    });
+  }
+  var guestCheckout = document.getElementById('usercheckOutDate');
+  if (guestCheckout) {
+    guestCheckout.setAttribute('min', todayStr);
+    guestCheckout.addEventListener('input', function() {
+      var val = guestCheckout.value;
+      if (val && val < todayStr) {
+        guestCheckout.value = '';
+        alert('Past dates are not allowed. Please select today or a future date.');
+      }
+    });
+  }
+
+  // Staff Last Visit Date validation (only today or past dates allowed)
+  var staffLastVisit = document.getElementById('staffLastVisitDate');
+  if (staffLastVisit) {
+    staffLastVisit.setAttribute('max', todayStr);
+    staffLastVisit.addEventListener('input', function() {
+      var val = staffLastVisit.value;
+      if (val && val > todayStr) {
+        staffLastVisit.value = '';
+        alert('Future dates are not allowed for Last Visit Date.');
+      }
+    });
+  }
+  // Guest Last Visit Date validation (only today or past dates allowed)
+  var guestLastVisit = document.getElementById('guestLastVisitDate');
+  if (guestLastVisit) {
+    guestLastVisit.setAttribute('max', todayStr);
+    guestLastVisit.addEventListener('input', function() {
+      var val = guestLastVisit.value;
+      if (val && val > todayStr) {
+        guestLastVisit.value = '';
+        alert('Future dates are not allowed for Last Visit Date.');
+      }
+    });
+  }
+
+  // Lucide icons initialization (after library is loaded)
+  if (window.lucide) {
+    lucide.createIcons();
+  }
+
+  // Login modal logic
+  const loginModal = document.getElementById('loginModal');
+  const loginBtn = document.querySelector('.login-btn');
+  const loginForm = document.getElementById('loginForm');
+  if (loginBtn && loginModal) {
+    loginBtn.addEventListener('click', function() {
+      loginModal.style.display = 'block';
+    });
+  }
+  if (loginForm) {
+    loginForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      // Add your login logic here
+      alert('Login form submitted!');
+    });
+  }
+});
+     const roomRates = {
+  deluxe: 5000,
+  executive: 8000,
+  garden: 6000,
+  penthouse: 12000
+};
+
+
+function updateRate(formId) {
+  // Use form-specific IDs for guest and staff forms
+  const form = document.getElementById(formId);
+  if (!form) return;
+  const roomType = form.querySelector('[name="roomType"]').value;
+  const rate = roomRates[roomType];
+  const roomRateElem = form.querySelector('#roomRate');
+  if (roomRateElem) {
+    roomRateElem.innerText = "Rate per Night: ₹" + rate;
+  }
+  updateTotal(formId);
+}
+
+function updateTotal(formId) {
+  const form = document.getElementById(formId);
+  if (!form) return;
+  const roomType = form.querySelector('[name="roomType"]').value;
+  const guests = form.querySelector('[name="guests"]').value;
+  const totalVisitInput = form.querySelector('input[name="total_visit"]');
+  let totalVisits = totalVisitInput ? parseInt(totalVisitInput.value) : 0;
+  if (roomType && guests) {
+    let total = roomRates[roomType] * guests;
+    if (totalVisits > 4) {
+      total = total * 0.8;
+    }
+    const totalAmountElem = form.querySelector('input[name="totalAmount"]');
+    if (totalAmountElem) {
+      totalAmountElem.value = total;
+    }
+  }
+}
+
+function payNow(formId) {
+  const form = document.getElementById(formId);
+  if (!form) {
+    alert('Booking form not found.');
+    return;
+  }
+  const roomType = form.querySelector('[name="roomType"]').value;
+  const guests = form.querySelector('[name="guests"]').value;
+  if (!roomType || !guests) {
+    alert('Please select a room type and number of guests.');
+    return;
+  }
+  // Ensure total is updated
+  const totalAmountElem = form.querySelector('input[name="totalAmount"]');
+  let amount = totalAmountElem ? totalAmountElem.value : '';
+  if (!amount) {
+    updateTotal(form.id);
+    amount = totalAmountElem ? totalAmountElem.value : '';
+  }
+  if (!amount) {
+    alert('Please select a room type and number of guests.');
+    return;
+  }
+  alert('Redirecting to payment gateway...\nAmount to be paid: ₹' + amount);
+}
+
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Guest form listeners
+  const guestForm = document.getElementById('userbookingForm');
+  if (guestForm) {
+    const guestRoomType = guestForm.querySelector('[name="roomType"]');
+    const guestGuests = guestForm.querySelector('[name="guests"]');
+    const guestTotalVisit = guestForm.querySelector('input[name="total_visit"]');
+    if (guestRoomType) guestRoomType.addEventListener('change', function() { updateRate('userbookingForm'); });
+    if (guestGuests) guestGuests.addEventListener('change', function() { updateTotal('userbookingForm'); });
+    if (guestTotalVisit) guestTotalVisit.addEventListener('input', function() { updateTotal('userbookingForm'); });
+  }
+  // Staff form listeners
+  const staffForm = document.getElementById('staffbookingForm');
+  if (staffForm) {
+    const staffRoomType = staffForm.querySelector('[name="roomType"]');
+    const staffGuests = staffForm.querySelector('[name="guests"]');
+    const staffTotalVisit = staffForm.querySelector('input[name="total_visit"]');
+    if (staffRoomType) staffRoomType.addEventListener('change', function() { updateRate('staffbookingForm'); });
+    if (staffGuests) staffGuests.addEventListener('change', function() { updateTotal('staffbookingForm'); });
+    if (staffTotalVisit) staffTotalVisit.addEventListener('input', function() { updateTotal('staffbookingForm'); });
+  }
+});
+    </script>
+    
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-section">
+          <h3>Luxury Haven</h3>
+          <p>Experience luxury like never before</p>
+        </div>
+        <div class="footer-section">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#rooms">Rooms</a></li>
+            <li><a href="#amenities">Amenities</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Contact</h4>
+          <ul>
+            <li>123 Luxury Street</li>
+            <li>Paradise City, PC 12345</li>
+            <li>+1 (555) 123-4567</li>
+            <li>info@luxuryhaven.com</li>
+          </ul>-+
+
+        </div>
+      </div>
+    </div>
+  </footer>
+  <script src="venome.js"></script>
+</body>
+</html>
+
+
+
+
+
