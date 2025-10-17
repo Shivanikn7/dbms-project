@@ -46,6 +46,5 @@ dbms-project/
 ├── screenshots/ # Screenshots or demo images
 ├── .gitignore
 └── README.md
-**
----
+
 
